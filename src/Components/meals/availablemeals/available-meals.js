@@ -1,4 +1,4 @@
-import Card from "../../cart/card";
+import Card from "../../Card/card";
 import MealsItem from "../../mealitem/meal-item";
 import classes from "./availablemeals.module.css";
 
@@ -32,6 +32,7 @@ const DUMMY_MEALS = [
 const AvailableMeals = () => {
   const mealsList = DUMMY_MEALS.map((meal) => (
     <MealsItem
+      id={meal.id}
       key={meal.id}
       name={meal.name}
       description={meal.description}
