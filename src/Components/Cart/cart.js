@@ -8,6 +8,8 @@ import CartContext from "../../store/cart-context";
 const Cart = (props) => {
   const cartContext = useContext(CartContext);
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const totalAmount = `$${cartContext.totalAmount.toFixed(2)}`;
 
@@ -20,14 +22,20 @@ const Cart = (props) => {
     cartContext.addItem({ ...item, amount: 1 });
   };
 
-  const submitHandler = (userData) => {
-    fetch("https://coreone-a42c5-default-rtdb.firebaseio.com/orders.json", {
-      method: "POST",
-      body: JSON.stringify({
-        user: userData,
-        orderedItems: cartContext.items,
-      }),
-    });
+  const submitHandler = async (userData) => {
+    setIsSubmitting(true);
+    await fetch(
+      "https://coreone-a42c5-default-rtdb.firebaseio.com/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          user: userData,
+          orderedItems: cartContext.items,
+        }),
+      }
+    );
+    setIsSubmitting(false);
+    setDidSubmit(true);
   };
 
   const cartItems = (
@@ -49,6 +57,9 @@ const Cart = (props) => {
     setIsCheckout(true);
   };
 
+  const submittingOrder = <p>Sending order data...</p>;
+  const successStatus = <p>Successfully sent the order</p>;
+
   return (
     <Modal onClose={props.onClose}>
       {cartItems}
@@ -69,6 +80,8 @@ const Cart = (props) => {
           </button>
         )}
       </div>
+      {isSubmitting && submittingOrder}
+      {didSubmit && successStatus}
     </Modal>
   );
 };
